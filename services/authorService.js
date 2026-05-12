@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authorService = require('../services/authorService');
+const authorService = require('./authorService');
 
 // GET /api/authors
 router.get('/', async (req, res, next) => {

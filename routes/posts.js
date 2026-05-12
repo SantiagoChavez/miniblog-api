@@ -2,17 +2,17 @@ const express = require('express');
 const router = express.Router();
 const postService = require('../services/postService');
 
-// Ruta para listar todos los posts
+// Obtener todos los posts con sus autores
 router.get('/', async (req, res, next) => {
   try {
     const posts = await postService.getAllPosts();
     res.json(posts);
   } catch (err) {
-    next(err); // Pasa el error al middleware global de errores
+    next(err);
   }
 });
 
-// Ruta para obtener el detalle de un post por ID
+// Obtener un post por su ID
 router.get('/:id', async (req, res, next) => {
   try {
     const post = await postService.getPostById(req.params.id);
@@ -23,7 +23,7 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-// Ruta para filtrar posts por el ID del autor
+// Obtener posts de un autor específico
 router.get('/author/:authorId', async (req, res, next) => {
   try {
     const posts = await postService.getPostsByAuthor(req.params.authorId);
@@ -33,7 +33,7 @@ router.get('/author/:authorId', async (req, res, next) => {
   }
 });
 
-// Ruta para crear un post nuevo verificando campos obligatorios
+// Crear un nuevo post
 router.post('/', async (req, res, next) => {
   try {
     const { title, content, author_id, published } = req.body;
@@ -47,4 +47,30 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+// Actualizar un post existente
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, content, published } = req.body;
+    const updatedPost = await postService.updatePost(id, title, content, published);
+    
+    if (!updatedPost) return res.status(404).json({ error: 'Post no encontrado' });
+    res.json(updatedPost);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Eliminar un post
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await postService.deletePost(id);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Esta línea SIEMPRE al final para que exporte todas las rutas anteriores
 module.exports = router;

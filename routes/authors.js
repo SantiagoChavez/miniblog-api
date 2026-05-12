@@ -1,92 +1,102 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // Esto importa tu nuevo index.js
+const authorService = require('../services/authorService');
 
-// GET /api/authors - Trae a Santiago, Heidi y quien esté en la DB
-router.get('/', async (req, res) => {
+// Obtener todos los autores desde la base de datos
+router.get('/', async (req, res, next) => {
   try {
-    const result = await db.query('SELECT * FROM authors ORDER BY id ASC');
-    res.json(result.rows); 
+    const authors = await authorService.getAllAuthors();
+    res.json(authors);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al obtener datos de la DB' });
+    next(err); // Lo manda al errorHandler global
   }
 });
 
-// GET /api/authors/:id
-router.get('/:id', async (req, res) => {
+// Obtener un autor específico por su ID
+router.get('/:id', async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const result = await db.query('SELECT * FROM authors WHERE id = $1', [id]);
-    
-    if (result.rows.length === 0) {
+    const author = await authorService.getAuthorById(req.params.id);
+    if (!author) {
       return res.status(404).json({ error: 'Autor no encontrado' });
     }
-    res.json(result.rows[0]);
+    res.json(author);
   } catch (err) {
-    res.status(500).json({ error: 'Error en el servidor' });
+    next(err);
   }
 });
 
-module.exports = router;
+// Crear un nuevo autor (POST)
+router.post('/', async (req, res, next) => {
+  try {
+    const { name, email, bio } = req.body;
+    
+    // Validación de campos obligatorios
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Nombre y email son requeridos' });
+    }
 
-// GET /api/authors/:id - Obtener un autor por ID
-router.get('/:id', (req, res) => {
-  const author = authors.find(a => a.id === parseInt(req.params.id));
-
-  if (!author) {
-    return res.status(404).json({ error: 'Autor no encontrado' });
+    const newAuthor = await authorService.createAuthor(name, email, bio);
+    res.status(201).json(newAuthor);
+  } catch (err) {
+    // Manejo específico por si el email ya existe en la DB
+    if (err.code === '23505') {
+      return res.status(400).json({ error: 'El email ya está registrado' });
+    }
+    next(err);
   }
-
-  res.json(author);
 });
 
-// POST /api/authors - Crear un nuevo autor
-router.post('/', (req, res) => {
-  const { name, email, bio } = req.body;
+// Actualizar un autor existente (PUT)
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, email, bio } = req.body;
+    
+    if (!name || !email) {
+      return res.status(400).json({ error: 'El nombre y el email son obligatorios' });
+    }
 
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Nombre y email son requeridos' });
+    const updatedAuthor = await authorService.updateAuthor(id, name, email, bio);
+    
+    if (!updatedAuthor) {
+      return res.status(404).json({ error: 'No se encontró el autor para actualizar' });
+    }
+    
+    res.json(updatedAuthor);
+  } catch (err) {
+    next(err);
   }
-
-  const newAuthor = {
-    id: authors.length + 1,
-    name,
-    email,
-    bio: bio || ''
-  };
-
-  authors.push(newAuthor);
-  res.status(201).json(newAuthor);
 });
 
-// PUT /api/authors/:id - Actualizar un autor
-router.put('/:id', (req, res) => {
-  const author = authors.find(a => a.id === parseInt(req.params.id));
+// Actualizar un post existente
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { title, content, published } = req.body;
 
-  if (!author) {
-    return res.status(404).json({ error: 'Autor no encontrado' });
+    const updatedPost = await postService.updatePost(id, title, content, published);
+    
+    if (!updatedPost) {
+      return res.status(404).json({ error: 'Post no encontrado' });
+    }
+    
+    res.json(updatedPost);
+  } catch (err) {
+    next(err);
   }
-
-  const { name, email, bio } = req.body;
-
-  if (name) author.name = name;
-  if (email) author.email = email;
-  if (bio !== undefined) author.bio = bio;
-
-  res.json(author);
 });
 
-// DELETE /api/authors/:id - Eliminar un autor
-router.delete('/:id', (req, res) => {
-  const index = authors.findIndex(a => a.id === parseInt(req.params.id));
-
-  if (index === -1) {
-    return res.status(404).json({ error: 'Autor no encontrado' });
+// Eliminar un post
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await postService.deletePost(id);
+    res.json(result);
+  } catch (err) {
+    next(err);
   }
-
-  authors.splice(index, 1);
-  res.json({ message: 'Autor eliminado exitosamente' });
 });
+
+
 
 module.exports = router;
