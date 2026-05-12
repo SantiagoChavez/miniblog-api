@@ -1,4 +1,5 @@
 const { loadEnvFile } = require('node:process');
+loadEnvFile('.env');
 const express = require('express');
 
 //Importar los archivos de rutas
@@ -8,7 +9,6 @@ const postsRouter = require('./routes/posts');
 //Importar el middleware de errores que creamos
 const errorHandler = require('./middlewares/errorHandler');
 
-loadEnvFile('.env');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -30,3 +30,8 @@ app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+
+
+
+
+
