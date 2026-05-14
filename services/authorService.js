@@ -1,38 +1,32 @@
-const express = require('express');
-const router = express.Router();
-const authorService = require('./authorService');
+const db = require('../db');
 
-// GET /api/authors
-router.get('/', async (req, res, next) => {
-  try {
-    const authors = await authorService.getAllAuthors();
-    res.json(authors);
-  } catch (err) { next(err); }
-});
+const getAllAuthors = async () => {
+    const result = await db.query('SELECT * FROM authors ORDER BY id ASC');
+    return result.rows;
+};
 
-// GET /api/authors/:id
-router.get('/:id', async (req, res, next) => {
-  try {
-    const author = await authorService.getAuthorById(req.params.id);
-    if (!author) return res.status(404).json({ error: 'Autor no encontrado' });
-    res.json(author);
-  } catch (err) { next(err); }
-});
+const getAuthorById = async (id) => {
+    const result = await db.query('SELECT * FROM authors WHERE id = $1', [id]);
+    return result.rows[0];
+};
 
-// POST /api/authors
-router.post('/', async (req, res, next) => {
-  try {
-    const { name, email, bio } = req.body;
-    if (!name || !email) return res.status(400).json({ error: 'Nombre y email requeridos' });
-    
-    const newAuthor = await authorService.createAuthor(name, email, bio);
-    res.status(201).json(newAuthor);
-  } catch (err) {
-    if (err.code === '23505') { // Error de email duplicado en Postgres
-      return res.status(400).json({ error: 'El email ya existe' });
-    }
-    next(err);
-  }
-});
+const createAuthor = async (authorData) => {
+    const { name, email, bio } = authorData;
+    const result = await db.query(
+        'INSERT INTO authors (name, email, bio) VALUES ($1, $2, $3) RETURNING *',
+        [name, email, bio]
+    );
+    return result.rows[0];
+};
 
-module.exports = router;
+const deleteAuthor = async (id) => {
+  const result = await db.query('DELETE FROM authors WHERE id = $1 RETURNING *', [id]);
+  return result.rows[0];
+};
+
+module.exports = {
+    getAllAuthors,
+    getAuthorById,
+    createAuthor,
+    deleteAuthor,
+};
