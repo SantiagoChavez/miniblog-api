@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postService = require('../services/postService');
+const { validateNewPost, validateUpdatePost } = require('../validators/postValidator');
 
 // GET /api/posts - Listar todos
 router.get('/', async (req, res, next) => {
@@ -36,13 +37,13 @@ router.get('/author/:authorId', async (req, res, next) => {
 // POST /api/posts - Crear post con validación
 router.post('/', async (req, res, next) => {
     try {
-        const { title, content, author_id } = req.body;
-        if (!title || !content || !author_id) {
-            return res.status(400).json({ error: 'Título, contenido y author_id son requeridos' });
-        }
-        const newPost = await postService.createPost(req.body);
+        const validatedData = validateNewPost(req.body);
+        const newPost = await postService.createPost(validatedData);
         res.status(201).json(newPost);
     } catch (err) {
+        if (err.statusCode) {
+            return res.status(err.statusCode).json({ error: err.message });
+        }
         next(err);
     }
 });
@@ -50,14 +51,14 @@ router.post('/', async (req, res, next) => {
 // PUT /api/posts/:id - Actualizar post
 router.put('/:id', async (req, res, next) => {
     try {
-        const { title, content, published } = req.body;
-        if (!title || !content) {
-            return res.status(400).json({ error: 'Título y contenido son requeridos' });
-        }
-        const updatedPost = await postService.updatePost(req.params.id, { title, content, published });
+        const validatedData = validateUpdatePost(req.body);
+        const updatedPost = await postService.updatePost(req.params.id, validatedData);
         if (!updatedPost) return res.status(404).json({ error: 'Post no encontrado' });
         res.json(updatedPost);
     } catch (err) {
+        if (err.statusCode) {
+            return res.status(err.statusCode).json({ error: err.message });
+        }
         next(err);
     }
 });

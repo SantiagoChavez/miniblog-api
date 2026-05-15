@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authorService = require('../services/authorService');
+const { validateNewAuthor, validateUpdateAuthor } = require('../validators/authorValidator');
 
 // GET /api/authors - Listar autores
 router.get('/', async (req, res, next) => {
@@ -26,13 +27,13 @@ router.get('/:id', async (req, res, next) => {
 // POST /api/authors - Crear autor
 router.post('/', async (req, res, next) => {
   try {
-    const { name, email, bio } = req.body;
-    if (!name || !email) {
-      return res.status(400).json({ error: 'Nombre y email son requeridos' });
-    }
-    const newAuthor = await authorService.createAuthor({ name, email, bio });
+    const validatedData = validateNewAuthor(req.body);
+    const newAuthor = await authorService.createAuthor(validatedData);
     res.status(201).json(newAuthor);
   } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
+    }
     if (err.code === '23505') return res.status(400).json({ error: 'El email ya existe' });
     next(err);
   }
@@ -41,14 +42,14 @@ router.post('/', async (req, res, next) => {
 // PUT /api/authors/:id - Actualizar autor
 router.put('/:id', async (req, res, next) => {
   try {
-    const { name, email, bio } = req.body;
-    if (!name || !email) {
-      return res.status(400).json({ error: 'Nombre y email son requeridos' });
-    }
-    const updatedAuthor = await authorService.updateAuthor(req.params.id, { name, email, bio });
+    const validatedData = validateUpdateAuthor(req.body);
+    const updatedAuthor = await authorService.updateAuthor(req.params.id, validatedData);
     if (!updatedAuthor) return res.status(404).json({ error: 'Autor no encontrado' });
     res.json(updatedAuthor);
   } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
+    }
     if (err.code === '23505') return res.status(400).json({ error: 'El email ya existe' });
     next(err);
   }
