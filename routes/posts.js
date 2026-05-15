@@ -12,6 +12,17 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+// GET /api/posts/:id - Detalle de post
+router.get('/:id', async (req, res, next) => {
+    try {
+        const post = await postService.getPostById(req.params.id);
+        if (!post) return res.status(404).json({ error: 'Post no encontrado' });
+        res.json(post);
+    } catch (err) {
+        next(err);
+    }
+});
+
 // GET /api/posts/author/:authorId
 router.get('/author/:authorId', async (req, res, next) => {
     try {
@@ -31,6 +42,21 @@ router.post('/', async (req, res, next) => {
         }
         const newPost = await postService.createPost(req.body);
         res.status(201).json(newPost);
+    } catch (err) {
+        next(err);
+    }
+});
+
+// PUT /api/posts/:id - Actualizar post
+router.put('/:id', async (req, res, next) => {
+    try {
+        const { title, content, published } = req.body;
+        if (!title || !content) {
+            return res.status(400).json({ error: 'Título y contenido son requeridos' });
+        }
+        const updatedPost = await postService.updatePost(req.params.id, { title, content, published });
+        if (!updatedPost) return res.status(404).json({ error: 'Post no encontrado' });
+        res.json(updatedPost);
     } catch (err) {
         next(err);
     }

@@ -27,9 +27,13 @@ app.get('/', (req, res) => {
 app.use('/api/posts', postsRouter);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
 
 
 
