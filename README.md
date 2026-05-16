@@ -129,6 +129,25 @@ cp .env.example .env
 npm test
 ```
 
+## ⚠️ Manejo de errores y validaciones
+
+La API aplica validaciones en el nivel de entrada (`validators/`) y maneja errores desde un middleware central (`middlewares/errorHandler.js`).
+
+- **400 Bad Request**: datos de entrada inválidos (campos requeridos faltantes, tipos incorrectos, formato de email inválido). Los validadores lanzan errores con `statusCode: 400`.
+- **404 Not Found**: recurso no encontrado (p. ej. autor o post inexistente).
+- **201 Created / 200 OK / 204 No Content**: respuestas exitosas según el endpoint.
+- **500 Internal Server Error**: errores imprevistos del servidor o restricciones de la base de datos (p. ej. violación de FK, longitud de columna excedida).
+
+Dónde están las validaciones:
+
+- `validators/authorValidator.js`: valida `name`, `email` y `bio`.
+- `validators/postValidator.js`: valida `title`, `content`, `author_id` y `published`.
+
+Consejos de pruebas:
+
+- Para probar robustez, revisá `tests/edgecases.test.js` que contiene casos de validación y ataques comunes (inputs inválidos, author_id inexistente, títulos muy largos, intentos de inyección SQL).
+- Ejecutá `npm test` para correr la suite completa (Vitest + Supertest).
+
 ## 📄 Documentación OpenAPI
 La documentación de la API se encuentra en `openapi.yaml`.
 
