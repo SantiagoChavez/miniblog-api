@@ -160,6 +160,16 @@ Interpretación rápida de resultados
 - Si todos los tests pasan: las validaciones están en su lugar y la API responde correctamente ante casos límite.
 - Si alguno falla con `500`: revisar los validadores y/o límites de columnas en la base de datos; considera aumentar validaciones o ajustar esquema DB.
 
+Integración continua (CI)
+
+Hemos añadido un workflow de GitHub Actions en `.github/workflows/ci.yml` que:
+
+- Levanta un servicio de PostgreSQL (imagen `postgres:15`).
+- Ejecuta `db/setup.sql` para poblar la base de datos de pruebas.
+- Ejecuta la suite con `npm test` (Vitest + Supertest).
+
+Nota: el workflow asume que se ejecuta contra la rama `main`. Si necesitás ajustar variables de entorno privadas, añadilas como `Secrets` en tu repo.
+
 
 ## 📄 Documentación OpenAPI
 La documentación de la API se encuentra en `openapi.yaml`.

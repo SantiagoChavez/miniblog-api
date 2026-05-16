@@ -45,7 +45,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ValidationError'
 
   /api/authors/{id}:
     get:
@@ -95,7 +95,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ValidationError'
         "404":
           description: Autor no encontrado.
           content:
@@ -152,7 +152,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ValidationError'
         "500":
           description: Error interno al crear post (por ejemplo, author_id inválido).
           content:
@@ -216,7 +216,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/ValidationError'
         "404":
           description: Post no encontrado.
           content:
@@ -330,3 +330,17 @@ components:
       properties:
         error:
           type: string
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+      example:
+        error: "Validation failed"
+        errors:
+          - "name is required"
+          - "email must be a valid email"
