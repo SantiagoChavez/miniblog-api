@@ -23,7 +23,14 @@ const validateNewAuthor = (data) => {
     };
   }
 
-  return { name, email, bio };
+  // Límites razonables para evitar errores en DB
+  const clean = {
+    name: name.trim().slice(0, 100),
+    email: email.trim().slice(0, 150),
+    bio: (bio || '').toString().slice(0, 1000)
+  };
+
+  return clean;
 };
 
 const validateUpdateAuthor = (data) => {
@@ -50,7 +57,13 @@ const validateUpdateAuthor = (data) => {
     };
   }
 
-  return { name, email, bio };
+  const clean = {
+    name: name.trim().slice(0, 100),
+    email: email.trim().slice(0, 150),
+    bio: (bio || '').toString().slice(0, 1000)
+  };
+
+  return clean;
 };
 
 module.exports = {

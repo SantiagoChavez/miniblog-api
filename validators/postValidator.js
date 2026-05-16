@@ -23,14 +23,24 @@ const validateNewPost = (data) => {
     };
   }
 
-  if (typeof author_id !== 'number' || author_id <= 0) {
+  // author_id puede venir como texto desde formularios, intentar parsearlo
+  const parsedAuthorId = Number(author_id);
+  if (!Number.isInteger(parsedAuthorId) || parsedAuthorId <= 0) {
     throw {
       statusCode: 400,
       message: 'El author_id debe ser un número válido'
     };
   }
 
-  return { title, content, author_id, published: published || false };
+  // Aplicar límites para evitar errores de columna en la BD
+  const clean = {
+    title: title.trim().slice(0, 255),
+    content: content.toString().slice(0, 5000),
+    author_id: parsedAuthorId,
+    published: Boolean(published)
+  };
+
+  return clean;
 };
 
 // Validar datos para actualizar post

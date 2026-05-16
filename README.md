@@ -148,6 +148,19 @@ Consejos de pruebas:
 - Para probar robustez, revisá `tests/edgecases.test.js` que contiene casos de validación y ataques comunes (inputs inválidos, author_id inexistente, títulos muy largos, intentos de inyección SQL).
 - Ejecutá `npm test` para correr la suite completa (Vitest + Supertest).
 
+Qué hace `tests/edgecases.test.js` (resumen fácil)
+
+- Valida respuestas ante entradas inválidas: emails sin `@`, nombres vacíos, `author_id` negativo o no numérico.
+- Prueba la reacción ante constraints de la base de datos: `author_id` inexistente (espera `500` o `400` según configuración), títulos extremadamente largos, y verifica que no se produzca un `500` por inyección SQL.
+- Crea recursos temporales cuando necesita (autor/post) y los limpia al final del suite para no ensuciar la DB.
+- Está pensado para medir la robustez de las validaciones y prevenir crashes en producción.
+
+Interpretación rápida de resultados
+
+- Si todos los tests pasan: las validaciones están en su lugar y la API responde correctamente ante casos límite.
+- Si alguno falla con `500`: revisar los validadores y/o límites de columnas en la base de datos; considera aumentar validaciones o ajustar esquema DB.
+
+
 ## 📄 Documentación OpenAPI
 La documentación de la API se encuentra en `openapi.yaml`.
 
