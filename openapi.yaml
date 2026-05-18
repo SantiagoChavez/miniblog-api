@@ -9,7 +9,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Servidor de desarrollo local
-  - url: https://api-miniblog-production.up.railway.app # Cambialo cuando tengas la de Railway
+  - url: https://miniblog-api-production-5fba.up.railway.app
     description: Servidor de producción en Railway
 
 paths:
