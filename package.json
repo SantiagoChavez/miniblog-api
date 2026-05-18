@@ -20,6 +20,7 @@
   "homepage": "https://github.com/SantiagoChavez/miniblog-api#readme",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "pg": "^8.20.0"

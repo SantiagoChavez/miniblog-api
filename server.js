@@ -1,7 +1,7 @@
 const { loadEnvFile } = require('node:process');
 loadEnvFile('.env');
 const express = require('express');
-
+const cors = require('cors');
 //Importar los archivos de rutas
 const authorsRouter = require('./routes/authors');
 const postsRouter = require('./routes/posts');
@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares iniciales
 app.use(express.json());
-
+app.use(cors()); // Esto le dice a Express: "Aceptá peticiones de cualquier lado"
 // Rutas de recursos
 app.use('/api/authors', authorsRouter);
 app.use('/api/posts', postsRouter);
