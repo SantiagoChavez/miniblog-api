@@ -5,7 +5,7 @@ info:
   description: API REST para gestión de autores y posts. Proyecto Integrador M2.
   contact:
     name: Santiago Ezequiel Chavez
-    email: santiago@example.com # Cambialo por el tuyo
+    email: chavezsantiago@gmail.com
 servers:
   - url: http://localhost:3000
     description: Servidor de desarrollo local

@@ -9,7 +9,7 @@ try {
 const express = require('express');
 const cors = require('cors');
 
-// 1. REQUERIMOS LAS LIBRERÍAS DE SWAGGER
+// REQUERIMOS LAS LIBRERÍAS DE SWAGGER
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 
@@ -22,15 +22,13 @@ const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// 2. CARGAMOS TU ARCHIVO DE CONFIGURACIÓN OPENAPI
-const swaggerDocument = YAML.load('./openapi.yaml');
+const swaggerDocument = YAML.load('./docs/openapi.yaml');
 
 // Middlewares iniciales
 app.use(express.json());
 app.use(cors()); // Esto le dice a Express: "Aceptá peticiones de cualquier lado"
 
-// 3. AGREGAMOS LA RUTA DE LA DOCUMENTACIÓN INTERACTIVA
+// AGREGAMOS LA RUTA DE LA DOCUMENTACIÓN INTERACTIVA
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Rutas de recursos
