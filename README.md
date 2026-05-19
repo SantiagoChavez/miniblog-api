@@ -40,9 +40,11 @@ Seguí estos pasos ordenados para clonar, instalar y correr el proyecto en tu co
    code .
 
 ### 2. Instalar las dependencias
-1. Adentro de Visual Studio Code, abrí la terminal interna presionando las teclas `Ctrl + Ñ` (o en el menú superior: *Terminal -> New Terminal*).
-2. Escribí el siguiente comando para descargar de forma automática todas las librerías necesarias (express, cors, postgres, swagger-ui-express, etc.):
-   npm install
+1. Adentro de Visual Studio Code, abrí la terminal interna presionando las teclas `Ctrl + Ñ` (o yendo al menú superior: *Terminal -> New Terminal*).
+2. Para asegurarte de tener instaladas las herramientas de documentación y el servidor, ejecutá este comando general que descarga todo junto (Express, CORS, Postgres, Swagger, YamlJS y Nodemon):
+   npm install express cors pg swagger-ui-express yamljs nodemon --save
+3. Si vas a correr la suite de pruebas locales, instalá también las herramientas de testing ejecutando:
+   npm install vitest supertest --save-dev
 
 ### 3. Configurar la Base de Datos Local
 1. Con tu herramienta favorita de PostgreSQL (como pgAdmin o psql), creá una base de datos llamada `miniblog_db`.
@@ -73,6 +75,13 @@ Si todo salió bien, verás los siguientes mensajes en consola:
 
 ---
 
+### 💡 Guía rápida para usar Visual Studio Code
+
+Si es tu primera vez usando este editor, tené en cuenta estos tres puntos clave para controlar el proyecto:
+
+- **Ver los archivos:** En la barra lateral izquierda tenés el explorador. Desde ahí podés hacer doble clic en `server.js` para ver el código o abrir la carpeta `docs/` para revisar el contrato `openapi.yaml`.
+- **Controlar la Terminal:** La terminal de abajo es tu consola de comandos. Si querés apagar el servidor en cualquier momento, hace clic dentro de la terminal y presioná las teclas `Ctrl + C` (esto frena el proceso).
+- **Recarga Automática:** Como el proyecto usa el comando `npm run dev` (que ejecuta `node --watch`), cada vez que hagas un cambio en el código y presiones `Ctrl + S` (Guardar), el servidor se va a reiniciar solo en la terminal sin que tengas que hacer nada.
 ## 📦 Comandos Disponibles en el Proyecto
 
 - npm start — Inicia el servidor en modo producción.
