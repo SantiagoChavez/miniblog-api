@@ -105,15 +105,16 @@ Esto creará un archivo en blanco antes de la ejecución para que el servidor in
 
 ## 📁 Estructura del Proyecto
 
+```text
 api-miniblog/
 ├── db/
 │   ├── index.js           # Conexión a PostgreSQL (Pool de conexiones)
 │   └── setup.sql          # Script de inicialización (Tablas y datos)
 ├── docs/
 │   ├── openapi.yaml       # Especificación y contrato OpenAPI 3.1.0 de la API
-│   └── Documentación IA con prompt.md # Registro del proceso de desarrollo asistido por IA
+│   └── Documentación IA con prompt.md # Registro del proceso asistido por IA
 ├── middlewares/
-│   └── errorHandler.js    # Middleware global para manejo centralizado de errores
+│   └── errorHandler.js    # Middleware global para manejo de errores
 ├── routes/
 │   ├── authors.js         # Endpoints y ruteo HTTP de autores
 │   └── posts.js           # Endpoints y ruteo HTTP de posts
@@ -125,12 +126,10 @@ api-miniblog/
 │   └── postValidator.js   # Validaciones de datos de entrada para posts
 ├── tests/
 │   ├── api.test.js        # Suite de pruebas con Vitest + Supertest
-│   └── edgecases.test.js  # Pruebas de robustez, límites e inyección SQL
+│   └── edgecases.test.js  # Pruebas de robustez e inyección SQL
 ├── server.js              # Punto de entrada de la aplicación Express
-├── package.json           # Scripts del sistema y dependencias anotadas
+├── package.json           # Scripts del sistema y dependencias
 └── vitest.config.js       # Configuración de entorno de pruebas
-
----
 
 ## 📝 Endpoints Principales (Contrato de la API)
 
